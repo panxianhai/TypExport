@@ -33,7 +33,8 @@ include 'menu.php';
         </div>
         
         <div>
-            <p>插件作者：<a href="https://panxianhai.com">hevin</a></p>
+            <p>插件作者：<a href="http://panxianhai.com">panxianhai</a></p>
+            <p>源码地址：<a href="https://github.com/panxianhai">Github</a></p>
         </div>
     </div>
 </div>
