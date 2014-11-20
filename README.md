@@ -7,8 +7,9 @@ WXR全称为WordPress eXtended Rss，是wordpress导出数据的一种格式，�
 
 #### 简介
 
-测试平台：typecho 1.0 & wordpress 4.0
 当前版本： 0.9
+
+测试平台：typecho 1.0 & wordpress 4.0
 
 #### 如何使用
 
