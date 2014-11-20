@@ -68,18 +68,13 @@ class TypExport_Action extends Typecho_Widget implements Widget_Interface_Do
 	<wp:wxr_version>1.2</wp:wxr_version>
 	<wp:base_site_url>$options->siteUrl</wp:base_site_url>
 	<wp:base_blog_url>$options->siteUrl</wp:base_blog_url>
-
 	$authors_list
 	$cats_list
 	$tags_list
-
 	<generator>http://wordpress.org/?v=4.0</generator>
-
 	$posts_list
-
 </channel>
 </rss>
-
 EOT;
     }
 
@@ -159,7 +154,6 @@ EOT;
         $dbPrefix = $db->getPrefix();
         $html = '';
         $post_table = $dbPrefix . 'contents';
-        $comment_table = $dbPrefix . 'comments';
         $relation_table = $dbPrefix . 'relationships';
         $meta_table = $dbPrefix . 'metas';
         $user_table = $dbPrefix . 'users';
@@ -182,6 +176,7 @@ EOT;
             $tag_str = '';
             $cat_str = '';
             $post_meta = '';
+            $comment_str = $this->get_comments($row['cid']);
             if ($row['type'] == 'page') {
                 $post_meta = "<wp:postmeta>
                                 <wp:meta_key>_wp_page_template</wp:meta_key>
@@ -203,6 +198,8 @@ EOT;
                     }
                 }
             }
+            // 处理markdown
+            $content = Markdown::convert(strip_tags($row['text']));
             $html .= "
             <item>
                 <title>{$row['title']}</title>
@@ -211,7 +208,7 @@ EOT;
                 <dc:creator><![CDATA[{$row['author']}]]></dc:creator>
                 <guid isPermaLink=\"false\">{$options->siteUrl}?p={$row['cid']}</guid>
                 <description></description>
-                <content:encoded><![CDATA[{$row['text']}]]></content:encoded>
+                <content:encoded><![CDATA[{$content}]]></content:encoded>
                 <excerpt:encoded><![CDATA[]]></excerpt:encoded>
                 <wp:post_id>={$row['cid']}</wp:post_id>
                 <wp:post_date>{$post_date}</wp:post_date>
@@ -228,8 +225,56 @@ EOT;
                 {$post_meta}
                 {$cat_str}
                 {$tag_str}
-
+                {$comment_str}
             </item>";
+        }
+        return $html;
+    }
+
+    public function get_comments($cid)
+    {
+        $html = '';
+        $db = Typecho_Db::get();
+        $dbPrefix = $db->getPrefix();
+        $comment_table = $dbPrefix . 'comments';
+
+        $sql = "select * from {$comment_table} where cid = {$cid}";
+        $rows = $db->fetchAll($db->query($sql));
+        if (count($rows) > 0) {
+            foreach ($rows as $c) {
+
+                $co_date = date('Y-m-d H:i:s', $c['created']);
+
+                switch($c['status']) {
+                    case 'approved':
+                        $status = 1;
+                        break;
+                    case 'spam':
+                        $status = 'spam';
+                        break;
+                    case 'waiting':
+                        $status = 0;
+                        break;
+                    case 'hidden':
+                        $status = 0;
+                        break;
+                }
+                $html .= "
+                <wp:comment>
+                    <wp:comment_id>{$c['coid']}</wp:comment_id>
+                    <wp:comment_author><![CDATA[{$c['author']}]]></wp:comment_author>
+                    <wp:comment_author_email>{$c['mail']}</wp:comment_author_email>
+                    <wp:comment_author_url>{$c['url']}</wp:comment_author_url>
+                    <wp:comment_author_IP>{$c['ip']}</wp:comment_author_IP>
+                    <wp:comment_date>{$co_date}</wp:comment_date>
+                    <wp:comment_date_gmt>{$co_date}</wp:comment_date_gmt>
+                    <wp:comment_content><![CDATA[{$c['text']}]]></wp:comment_content>
+                    <wp:comment_approved>{$status}</wp:comment_approved>
+                    <wp:comment_type>{$c['type']}</wp:comment_type>
+                    <wp:comment_parent>{$c['parent']}</wp:comment_parent>
+                    <wp:comment_user_id>{$c['authorId']}</wp:comment_user_id>
+                </wp:comment>";
+            }
         }
         return $html;
     }

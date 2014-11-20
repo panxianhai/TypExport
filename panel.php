@@ -11,7 +11,8 @@ include 'menu.php';
         </div>
         <div class="row typecho-page-main" role="form">
             <div id="dbmanager-plugin" class="col-mb-12 col-tb-8 col-tb-offset-2">
-                <p>导出的XML文件可以直接导入到wordpress。</p>
+                <p>在您点击下面的按钮后，Typecho会创建一个XML文件，供您保存到计算机中。</p>
+                <p>我们称这种格式为WordPress eXtended RSS或WXR，它包含了您的全部文章、页面、评论、分类目录和标签。</p>
                 <form action="<?php $options->index('/action/typexport?export'); ?>" method="post">
                     <ul class="typecho-option typecho-option-submit" id="typecho-option-item-submit-3">
                         <li>
