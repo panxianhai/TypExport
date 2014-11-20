@@ -1,10 +1,10 @@
 <?php
 /**
- * 数据导出到wordpress.xml
+ * 数据导出到WXR文件
  *
  * @package TypExport
  * @author panxianhai
- * @version 1.0.0
+ * @version 0.9.0
  * @link http://panxianhai.com
  */
 class TypExport_Plugin implements Typecho_Plugin_Interface
