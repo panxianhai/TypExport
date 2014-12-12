@@ -198,8 +198,12 @@ EOT;
                     }
                 }
             }
-            // 处理markdown
-            $content = Markdown::convert(strip_tags($row['text']));
+            // 处理markdown,判断是否是markdown
+            if (substr($row['text'], 0, 15) == '<!--markdown-->') {
+                $content = Markdown::convert(strip_tags($row['text']));
+            } else {
+                $content = $row['text'];
+            }
             $html .= "
             <item>
                 <title>{$row['title']}</title>
