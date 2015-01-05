@@ -199,7 +199,10 @@ EOT;
                 }
             }
             // 处理markdown,判断是否是markdown
-            if (substr($row['text'], 0, 15) == '<!--markdown-->') {
+            $version_string = Typecho_Common::VERSION;
+            $args = explode('/', $version_string);
+            $version = floatval($args[0]);
+            if (substr($row['text'], 0, 15) == '<!--markdown-->' && $version >= 1.0) {
                 $content = Markdown::convert(strip_tags($row['text']));
             } else {
                 $content = $row['text'];
